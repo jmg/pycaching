@@ -1,6 +1,7 @@
 import unittest
 import simplejson as json
 from client import CacheClient
+from entity import CachedEntity
 
 
 class CacheTest(unittest.TestCase):
@@ -20,7 +21,7 @@ class CacheTest(unittest.TestCase):
         self.assertEquals(True, CacheClient().delete("key-1"))
         self.assertEquals(None, CacheClient().get("key-1"))
 
-    def test_set_and_get_obj(self):
+    def test_set_and_get_dict(self):
 
         person = {
             "id": "person-1",
@@ -34,6 +35,33 @@ class CacheTest(unittest.TestCase):
         data = json.loads(CacheClient().get(person["id"]))
 
         self.assertEquals(data, person)
+
+    def test_set_and_get_obj(self):
+
+        class Person(CachedEntity):
+
+            def __init__(self, id, name, age, lastname, job):
+
+                self.id = id
+                self.name = name
+                self.age = age
+                self.lastname = lastname
+                self.job = job
+
+                CachedEntity.__init__(self)
+
+            def get_id(self):
+
+                return self.id
+
+        person = Person("person-1", "juan", 25, "garcia", "developer")
+
+        self.assertEquals(True, person.save())
+
+        data = Person.get(person.id)
+
+        self.assertEquals(data, person.get_attrs())
+        self.assertEquals(True, person.delete(person.id))
 
 
 unittest.main()
