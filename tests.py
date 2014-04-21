@@ -1,10 +1,16 @@
 import unittest
 import simplejson as json
+
 from client import CacheClient
+from server import CacheServer
 from entity import CachedEntity
 
 
 class CacheTest(unittest.TestCase):
+
+    def setUp(self):
+
+        pass
 
     def test_set(self):
 
@@ -56,12 +62,12 @@ class CacheTest(unittest.TestCase):
 
         person = Person("person-1", "juan", 25, "garcia", "developer")
 
-        self.assertEquals(True, person.save())
+        entity_id = person.save()
 
-        data = Person.get(person.id)
+        data = Person.get(entity_id)
 
         self.assertEquals(data, person.get_attrs())
-        self.assertEquals(True, person.delete(person.id))
+        self.assertEquals(True, Person.delete(entity_id))
 
 
 unittest.main()

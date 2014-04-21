@@ -10,7 +10,11 @@ class CachedEntity(object):
 
     def save(self):
 
-        return self._cache.set(self.get_id(), json.dumps(self.get_attrs()))
+        entity_id = self.get_id()
+        data = json.dumps(self.get_attrs())
+
+        if self._cache.set(entity_id, data):
+            return entity_id
 
     def get_attrs(self):
 
